@@ -139,7 +139,7 @@
         const copy = Object.assign(treasure, { [this.address]: boss });
         store.set(walletList, copy);
         this.showDialog = false;
-        this.$router.push('/my/wallet');
+        this.$router.push('/wallet');
       },
       returnNg() {
         this.showDialog = false;

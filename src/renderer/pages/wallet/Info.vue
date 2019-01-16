@@ -2,7 +2,7 @@
   <div class="wallet-info">
     <Header
         headerTitle="钱包管理"
-        backward="/my/wallet"
+        backward="/wallet"
     ></Header>
     <div class="wallet-info-name">
       <p class="wallet-info-name-main">修改钱包名称</p>

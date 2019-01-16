@@ -2,7 +2,7 @@
   <div class="tx">
     <Header
       headerTitle="交易详情"
-      backward="/my/wallet"
+      backward="/wallet"
     ></Header>
     
     <v-list class="list">

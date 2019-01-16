@@ -6,8 +6,6 @@
         <img v-if="hasBackward" src="../../../static/images/common/head_left.png" @click="backwardPage">
       </div>
       <div class="wallet-header-right">
-        <img v-if="forward==='changeproject'" src="../../../static/images/common/change.png" @click="forwardLink">
-        <img v-if="forward==='noticeFilter_1'" src="../../../static/images/common/notice_1.png" @click="forwardLink">
         <img v-if="forward==='noticeFilter_2'" src="../../../static/images/common/notice_2.png" @click="forwardLink">
       </div>
       <div class="wallet-header-middle">

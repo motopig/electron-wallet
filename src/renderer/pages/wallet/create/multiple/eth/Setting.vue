@@ -178,7 +178,7 @@
         // 清除上一个创建页面的数据
         this.$store.dispatch('ethCreateProcess', JSON.stringify({}));
         if (res.resultCode === '200') {
-          this.$router.push('/my/wallet');
+          this.$router.push('/wallet');
           this.notify('创建成功');
         } else {
           this.notify(res.resultMsg);

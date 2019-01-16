@@ -9,7 +9,7 @@
           size="120"
           color="grey lighten-4"
       >
-        <img src="/static/images/account/group.png">
+        <img src="/static/images/wallet/group.png">
       </v-avatar>
       <p v-if="alias" class="receive-name">{{ alias }}</p>
       <p v-if="address" class="receive-address">{{ address }}</p>

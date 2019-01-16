@@ -2,7 +2,7 @@
   <div class="wallet-create">
     <Header
         headerTitle="选择类型"
-        backward="/my/wallet"
+        backward="/wallet"
     ></Header>
     <div class="btns">
       <div class="left both">

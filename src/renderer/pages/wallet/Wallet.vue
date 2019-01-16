@@ -1,13 +1,6 @@
 <template>
   <div class="wallet-main">
     <Header
-        v-if="undone>0"
-        headerTitle="钱包"
-        :forward="'noticeFilter_1'"
-        @forwardLink="selectNoticeType"
-    ></Header>
-    <Header
-        v-else
         headerTitle="钱包"
         :forward="'noticeFilter_2'"
         @forwardLink="selectNoticeType"
@@ -18,27 +11,8 @@
         <div class="wallet-mainnotice-area">
           <img class="wallet-mainnotice-img" src="../../../../static/images/wallet/all_untreated.png">
           <p class="wallet-mainnotice-text">
-            <router-link to="/wallet/allpending" class="wallet-mainnotice-text-p">
-              所有未处理(<span class="wallet-mainnotice-text-red">{{ undone }}</span>)
-            </router-link>
-          </p>
-        </div>
-        <div class="wallet-mainnotice-line"></div>
-        <div class="wallet-mainnotice-area">
-          <img class="wallet-mainnotice-img" src="../../../../static/images/wallet/asset.png">
-          <p class="wallet-mainnotice-text">
-            <router-link to="/wallet/allasset" class="wallet-mainnotice-text-p">
-              所有资产
-            </router-link>
-          </p>
-        </div>
-        <div class="wallet-mainnotice-line"></div>
-        <div class="wallet-mainnotice-area">
-          <img class="wallet-mainnotice-img" src="../../../../static/images/wallet/asset.png">
-          <p class="wallet-mainnotice-text">
-            <!-- <span @click="wsTest">  websock 测试</span> -->
-            <router-link to="/wallet/eth/single/tx/49" class="wallet-mainnotice-text-p">
-            Tx
+            <router-link to="/wallet/create" class="wallet-mainnotice-text-p">
+              创建钱包
             </router-link>
           </p>
         </div>
@@ -52,7 +26,7 @@
                 size="120"
                 color="grey lighten-4"
         >
-          <img src="../../../../static/images/account/group.png">
+          <img src="../../../../static/images/wallet/group.png">
         </v-avatar>
         <img class="wallet-mainimg-right" v-if="wallets && !isLoading" @click="nextWallet" src="../../../../static/images/common/right.png"/>
         <img class="wallet-mainimg-right" v-else-if="wallets" src="../../../../static/images/common/right.png"/>
@@ -73,7 +47,7 @@
           v-for="(item, key) in tabNames"
           :key="key"
       >
-        {{ item }} <span v-if="key==='0'">（<span class="wallet-mainname-undone">{{ undone }}</span>）</span>
+        {{ item }} <span v-if="key==='0'"></span>
       </v-tab>
       <v-tab-item
           v-for="(item, key) in tabNames"
@@ -133,7 +107,6 @@
     data() {
       return {
         index: 0,
-        undone: 0,
         imgSrc: '',
         tabNames: {
           0: '未处理',
@@ -151,22 +124,6 @@
       };
     },
     methods: {
-      wsTest() {
-        const a = {
-          email: 'brook@mooie.io',
-        };
-        this.$socketApi.sendSock(this.$store.state.user.token, a, this.wsBack);
-      },
-      wsBack(e) {
-        this.$toast(e.message, {
-          horizontalPosition: 'center',
-          verticalPosition: 'center',
-          className: 'wallet-toast',
-        });
-      },
-      undoneBack(num) {
-        this.undone = num;
-      },
       fetchWallet() {
         this.startLoading();
         if (this.$store.state.wallet.walletindex) {

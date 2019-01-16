@@ -155,7 +155,7 @@
       saveSucc(res) {
         this.isLoading = false;
         if (res.resultCode === '200') {
-          this.$router.push('/my/wallet');
+          this.$router.push('/wallet');
           this.notify('创建成功');
         } else {
           this.notify(res.resultMsg);

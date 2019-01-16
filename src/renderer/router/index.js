@@ -7,6 +7,11 @@ Vue.use(Router);
 
 const routes = [
   {
+    // /
+    path: '/',
+    redirect: '/wallet',
+  },
+  {
     // wallet
     path: '/wallet',
     component: WalletLp,
