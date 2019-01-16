@@ -1,0 +1,23 @@
+@keyframes synchronize {
+  0% {
+    background: url("../../../../static/images/common/refresh_1.png");
+  }
+  16% {
+    background: url("../../../../static/images/common/refresh_2.png");
+  }
+  32% {
+    background: url("../../../../static/images/common/refresh_3.png");
+  }
+  48% {
+    background: url("../../../../static/images/common/refresh_4.png");
+  }
+  64% {
+    background: url("../../../../static/images/common/refresh_5.png");
+  }
+  80% {
+    background: url("../../../../static/images/common/refresh_6.png");
+  }
+  100% {
+    background: url("../../../../static/images/common/refresh_1.png");
+  }
+}
