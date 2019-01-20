@@ -107,7 +107,6 @@
 <script>
   import Header from '@/common/Header';
   import Tabbar from '@/common/Tabbar';
-  import Wallet from '@/api/Wallet';
   import Dict from '@/config/dict';
 
   export default {
@@ -158,14 +157,15 @@
     },
     filters: {
       typeFilter(type) {
-        switch (type) {
-          case 'IN':
-            return '转入';
-          case 'OUT':
-            return '转出';
-          default:
-            return '';
-        }
+        // switch (type) {
+        //   case 'IN':
+        //     return '转入';
+        //   case 'OUT':
+        //     return '转出';
+        //   default:
+        //     return '';
+        // }
+        return type;
       },
       process(name) {
         return `../../../../../static/images/coin/${Dict.network[name].toLowerCase()}.png`;
@@ -173,65 +173,8 @@
     },
     methods: {
       fetchTx() {
-        this.$emit('startLoading');
-        if (this.coin === 'BTC' || this.coin === 'USDT') {
-          Wallet.walletBtcTradeList({
-            start: new Date(this.start).getTime() / 1000,
-            end: new Date(this.end).getTime() / 1000,
-            walletAddress: this.address,
-            pageNum: 0,
-            pageSize: 100,
-          }).then(this.fetchSucc).catch(this.fetchErr);
-        } else {
-          Wallet.walletEthTradeList({
-            start: new Date(this.start).getTime() / 1000,
-            end: new Date(this.end).getTime() / 1000,
-            walletAddress: this.address,
-            pageNum: 0,
-            pageSize: 100,
-          }).then(this.fetchSucc).catch(this.fetchErr);
-        }
-      },
-      fetchSucc(res) {
-        if (res.resultCode === '200') {
-          this.tradeList = res.data.list;
-          this.currentPrice = res.data.currentPrice;
-          this.walletType = res.data.walletType;
-        } else {
-          this.$toast(res.resultMsg, {
-            horizontalPosition: 'center',
-            verticalPosition: 'center',
-            className: 'wallet-toast',
-          });
-        }
-        this.$emit('endLoading');
-      },
-      fetchErr() {
-        this.$emit('endLoading');
-      },
-      getTransactionTime(time) {
-        const date = new Date(time * 1000);
-        let month = date.getMonth() + 1;
-        if (month.toString().length < 2) {
-          month = `0${month}`;
-        }
-        let day = date.getDate();
-        if (day.toString().length < 2) {
-          day = `0${day}`;
-        }
-        let hour = date.getHours();
-        if (hour.toString().length < 2) {
-          hour = `0${hour}`;
-        }
-        let minute = date.getMinutes();
-        if (minute.toString().length < 2) {
-          minute = `0${minute}`;
-        }
-        let second = date.getSeconds();
-        if (second.toString().length < 2) {
-          second = `0${second}`;
-        }
-        return `${date.getFullYear()}-${month}-${day} ${hour}:${minute}:${second}`;
+        // this.$emit('startLoading');
+        return [];
       },
       getUrl(address, alias, coin, type) {
         if (this.type === '1') {

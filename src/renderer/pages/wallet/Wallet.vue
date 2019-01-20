@@ -18,23 +18,26 @@
         </div>
       </div>
     </div>
-    <div class="wallet-mainimg">
+    <div class="wallet-mainimg" v-if="wallets && !isLoading">
       <div class="wallet-mainimg-head">
-        <img class="wallet-mainimg-left" v-if="wallets && !isLoading" @click="prevWallet" src="../../../../static/images/common/left.png"/>
-        <img class="wallet-mainimg-left" v-else-if="wallets" src="../../../../static/images/common/left.png"/>
+        <img class="wallet-mainimg-left" v-if="wallets.length && !isLoading" @click="prevWallet" src="../../../../static/images/common/left.png"/>
+        <img class="wallet-mainimg-left" v-else-if="wallets.length" src="../../../../static/images/common/left.png"/>
         <v-avatar
                 size="120"
                 color="grey lighten-4"
         >
           <img src="../../../../static/images/wallet/group.png">
         </v-avatar>
-        <img class="wallet-mainimg-right" v-if="wallets && !isLoading" @click="nextWallet" src="../../../../static/images/common/right.png"/>
-        <img class="wallet-mainimg-right" v-else-if="wallets" src="../../../../static/images/common/right.png"/>
+        <img class="wallet-mainimg-right" v-if="wallets.length && !isLoading" @click="nextWallet" src="../../../../static/images/common/right.png"/>
+        <img class="wallet-mainimg-right" v-else-if="wallets.length" src="../../../../static/images/common/right.png"/>
       </div>
-      <p v-if="wallets && typeof wallets[index] !== 'undefined'" class="wallet-mainname">{{ wallets[index].walletAlias }}</p>
-      <p v-if="wallets && typeof wallets[index] !== 'undefined'" class="wallet-mainaddress">{{ wallets[index].walletAddress }}
+      <p v-if="wallets.length && typeof wallets[index] !== 'undefined'" class="wallet-mainname">{{ wallets[index].alias }}</p>
+      <p v-if="wallets.length && typeof wallets[index] !== 'undefined'" class="wallet-mainaddress">{{ wallets[index].address }}
         <img class="qr-code" @click="qrpage" src="../../../../static/images/wallet/qr.png">
       </p>
+    </div>
+    <div class="no-wallets" v-if="wallets.length==0">
+      
     </div>
     <v-tabs
         class="wallet-mainname-tabs"
@@ -53,7 +56,7 @@
           v-for="(item, key) in tabNames"
           :key="key"
       >
-        <Pending
+        <!-- <Pending
             v-if="key==='0' && currentAddress"
             :currentAddress="currentAddress"
             :currentAlias="currentAlias"
@@ -61,7 +64,7 @@
             @undoned="undoneBack"
             @startLoading="startLoading"
             @endLoading="endLoading"
-        ></Pending>
+        ></Pending> -->
         <Asset
             v-if="key==='1' && currentCoin && currentAddress"
             :currentAddress="currentAddress"
@@ -88,19 +91,17 @@
 </template>
 
 <script>
+  import Store from 'electron-store';
   import Header from '@/common/Header';
   import Tabbar from '@/common/Tabbar';
-  import Wallet from '@/api/Wallet';
-  import Pending from './components/Pending';
+  import Coin from '@/config/coin';
   import Asset from './components/Asset';
   import List from './components/List';
-  import dict from '../../config/dict';
 
   export default {
     components: {
       Header,
       Tabbar,
-      Pending,
       Asset,
       List,
     },
@@ -109,7 +110,6 @@
         index: 0,
         imgSrc: '',
         tabNames: {
-          0: '未处理',
           1: '资产状况',
           2: '交易记录',
         },
@@ -119,7 +119,7 @@
         currentAlias: '',
         currentCoin: '',
         currentType: '',
-        wallets: null,
+        wallets: [],
         isLoading: 0,
       };
     },
@@ -129,14 +129,22 @@
         if (this.$store.state.wallet.walletindex) {
           this.index = this.$store.state.wallet.walletindex;
         }
-        Wallet.selfWallet({
-          userId: this.$store.state.user.id,
-        }).then(this.selfSucc).catch(this.selfErr);
+        const store = new Store();
+        Coin.coins.forEach((item) => {
+          const walletList = `${Coin.walletList}_${item}`;
+          const lists = store.get(walletList);
+          if (lists) {
+            Object.keys(lists).forEach((item) => {
+              this.wallets.push(lists[item]);
+            });
+          }
+        });
+        console.log(this.wallets.length);
+        this.selfSucc();
       },
-      selfSucc(res) {
-        this.wallets = res.data;
+      selfSucc() {
         if (typeof this.wallets[this.index] === 'undefined') {
-          this.$store.dispatch('removeWalletindex');
+          // this.$store.dispatch('removeWalletindex');
         }
         this.setCurrentWallet();
         this.endLoading();
@@ -145,10 +153,10 @@
         this.endLoading();
       },
       setCurrentWallet() {
-        if (this.wallets) {
-          this.currentAddress = this.wallets[this.index].walletAddress;
-          this.currentCoin = dict.network[this.wallets[this.index].currencyType];
-          this.currentAlias = this.wallets[this.index].walletAlias;
+        if (this.wallets.length) {
+          this.currentAddress = this.wallets[this.index].address;
+          this.currentCoin = this.wallets[this.index].coin;
+          this.currentAlias = this.wallets[this.index].alias;
           this.currentType = this.wallets[this.index].type;
         }
       },
@@ -183,10 +191,10 @@
         this.$router.push({ path: '/wallet/receive', query: { address: this.currentAddress, alias: this.currentAlias } });
       },
       startLoading() {
-        this.isLoading += 1;
+        this.isLoading = true;
       },
       endLoading() {
-        this.isLoading -= 1;
+        this.isLoading = false;
       },
     },
     mounted() {

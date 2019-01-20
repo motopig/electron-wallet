@@ -36,11 +36,9 @@
   import bitcoin from 'bitcoinjs-lib';
   import { ethers } from 'ethers';
   import Header from '@/common/Header';
-  import Wallet from '@/api/Wallet';
+  import Coin from '@/config/coin';
+  import Des from '@/libs/des';
   import PwdInfo from '../../components/PwdInfo';
-  import Dict from '../../../../config/dict';
-  import Base from '../../../../config/base';
-  import Des from '../../../../libs/des';
 
   export default {
     components: {
@@ -87,11 +85,9 @@
             xpub: Des.encrypt(root.neutered().toBase58(), this.password),
           };
           const child0 = root.derivePath("m/44'/0'/0'/0/0");
-          data.address0 = {
-            privateKey: Des.encrypt(child0.toWIF(), this.password),
-            address: this.getAddress(child0),
-            publicKey: child0.publicKey.toString('hex'),
-          };
+          data.privateKey = Des.encrypt(child0.toWIF(), this.password);
+          data.address = this.getAddress(child0);
+          data.publicKey = child0.publicKey.toString('hex');
           // save wallet to store
           this.saveWalletToStore(this.getAddress(child0), data);
           // save wallet to backend
@@ -106,7 +102,7 @@
         }
       },
       saveWalletToStore(address, data) {
-        const walletList = `${Base.walletList}_${this.$store.state.user.id}_${this.$route.query.coin}`;
+        const walletList = `${Coin.walletList}_${this.$route.query.coin}`;
         const store = new Store();
         let newData = {};
         const old = store.get(walletList);
@@ -119,28 +115,33 @@
         }
       },
       saveWalletToBack(address, publickey) {
-        Wallet.saveWallet({
-          walletAlias: this.alias,
-          walletAddress: address,
-          userEmail: this.$store.state.user.email,
-          projectId: this.$store.state.fund.projectid,
-          status: 1,
-          type: 1, // 1 单签 2 多签
-          contactList: '[]',
-          passNum: 1,
-          userId: this.$store.state.user.id,
-          walletSource: 1, // 1 自我创建 2 相继导入 3 参与多签
-          publicKey: publickey,
-          currencyType: Dict.coin[this.$route.query.coin],
-        }).then(this.saveSucc).catch(this.saveErr);
+        console.log(address);
+        console.log(publickey);
+        // Wallet.saveWallet({
+        //   walletAlias: this.alias,
+        //   walletAddress: address,
+        //   userEmail: this.$store.state.user.email,
+        //   projectId: this.$store.state.fund.projectid,
+        //   status: 1,
+        //   type: 1, // 1 单签 2 多签
+        //   contactList: '[]',
+        //   passNum: 1,
+        //   userId: this.$store.state.user.id,
+        //   walletSource: 1, // 1 自我创建 2 相继导入 3 参与多签
+        //   publicKey: publickey,
+        //   currencyType: Dict.coin[this.$route.query.coin],
+        // }).then(this.saveSucc).catch(this.saveErr);
       },
       createEthByPwd(keystore) {
         ethers.Wallet.fromEncryptedJson(keystore, this.password).then(this.ethCb);
       },
       ethCb(wallet) {
         this.eth.mnemonic = Des.encrypt(wallet.mnemonic, this.password);
-        this.eth.address = Des.encrypt(wallet.address, this.password);
-        this.eth.privatekey = Des.encrypt(wallet.privateKey, this.password);
+        this.eth.address = wallet.address;
+        this.eth.publicKey = Des.encrypt(wallet.privateKey, this.password);
+        this.eth.coin = 'ETH';
+        this.eth.type = 1;
+        this.eth.alias = this.alias;
         const data = this.eth;
         // save wallet to store
         this.saveWalletToStore(wallet.address, data);

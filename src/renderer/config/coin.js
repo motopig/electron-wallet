@@ -45,4 +45,6 @@ export default {
     bytecode: '',
     abi: [],
   },
+  coins: ['BTC', 'ETH', 'USDT'],
+  walletList: 'walletList',
 };

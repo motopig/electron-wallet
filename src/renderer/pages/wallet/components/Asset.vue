@@ -30,7 +30,6 @@
 <script>
   import Header from '@/common/Header';
   import Tabbar from '@/common/Tabbar';
-  import Wallet from '@/api/Wallet';
 
   export default {
     props: {
@@ -68,26 +67,6 @@
     },
     methods: {
       walletAsset() {
-        this.$emit('startLoading');
-        Wallet.walletAsset({
-          walletAddress: this.currentAddress,
-        }).then(this.assetSuc).catch(this.assetErr);
-      },
-      assetSuc(res) {
-        if (res.resultCode === '200') {
-          this.assets = res.data;
-        } else {
-          // todo 提示文案
-          this.$toast('网络获取超时，请重新刷新', {
-            horizontalPosition: 'center',
-            verticalPosition: 'center',
-            className: 'wallet-toast',
-          });
-        }
-        this.$emit('endLoading');
-      },
-      assetErr() {
-        this.$emit('endLoading');
       },
     },
     mounted() {
