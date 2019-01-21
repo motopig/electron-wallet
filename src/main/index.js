@@ -1,5 +1,5 @@
-import { app, BrowserWindow } from 'electron' // eslint-disable-line
-
+import { app, BrowserWindow } from 'electron'; // eslint-disable-line
+import { autoUpdater } from 'electron-updater';
 /**
  * Set `__static` path to static files in production
  * https://simulatedgreg.gitbooks.io/electron-vue/content/en/using-static-assets.html
@@ -53,15 +53,32 @@ app.on('activate', () => {
  * support auto updating. Code Signing with a valid certificate is required.
  * https://simulatedgreg.gitbooks.io/electron-vue/content/en/using-electron-builder.html#auto-updating
  */
-
-/*
-import { autoUpdater } from 'electron-updater'
-
-autoUpdater.on('update-downloaded', () => {
-  autoUpdater.quitAndInstall()
-})
-
+function sendUpdateMessage(message, data) {
+  mainWindow.webContents.send('update-message', { message, data });
+}
 app.on('ready', () => {
-  if (process.env.NODE_ENV === 'production') autoUpdater.checkForUpdates()
-})
- */
+  if (process.env.NODE_ENV === 'production') autoUpdater.checkForUpdates();
+});
+// 阻止程序关闭自动安装升级
+autoUpdater.autoInstallOnAppQuit = false;
+autoUpdater.on('error', (data) => {
+  sendUpdateMessage('error', data);
+});
+// 有可用更新
+autoUpdater.on('update-available', (data) => {
+  sendUpdateMessage('update-available', data);
+});
+// 已经最新
+autoUpdater.on('update-not-available', (data) => {
+  sendUpdateMessage('update-not-available', data);
+});
+// 更新下载进度事件
+autoUpdater.on('download-progress', (data) => {
+  sendUpdateMessage('download-progress', data);
+});
+autoUpdater.on('update-downloaded', () => {
+  sendUpdateMessage('update-downloaded', {});
+  app.once('update-now', () => {
+    autoUpdater.quitAndInstall();
+  });
+});
