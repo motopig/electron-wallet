@@ -1,10 +1,11 @@
 # electron wallet
-
+[![Build Status](https://travis-ci.org/motopig/electron-wallet.svg?branch=master)](https://travis-ci.org/motopig/electron-wallet)
 > An electron-vue project
 
 #### Build Setup
 
 ``` bash
+Dependencies
 # install dependencies
 npm install
 
